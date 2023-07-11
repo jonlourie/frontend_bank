@@ -7,6 +7,7 @@ import TagCreator from "../components/TagCreator";
 import axios from "axios";
 import AccountNav from "../AccountNav";
 import { UserContext } from "../UserContext";
+import { de } from "date-fns/locale";
 
 export default function CreateStore() {
 
@@ -28,13 +29,15 @@ export default function CreateStore() {
 
     const [isToggled, setToggle] = useState(false); // initial state is 'false'
 
+    const [isValidForm, setIsValidForm] = useState(false);
+
     const {setWithdraw, modifyLastAccount, deposit, newuser} = useContext(UserContext)
 
     const handleModifyLastAccount = () => {
       const users = newuser; // Replace with real user 
       const deposits = deposit; // Replace with real deposits
       const withdrawal = price; // Replace with real withdrawal
-      const balance = price - deposit; // Replace with real balance
+      const balance = deposit - price; // Replace with real balance
   
       modifyLastAccount(users, deposits, balance, withdrawal);
     };
@@ -97,12 +100,12 @@ export default function CreateStore() {
 
         if (!price) {
             alert('Please fill in all fields.');
-            return;
-        }
-
-        if (price > deposit) {
+            setIsValidForm(false);
+        } else if (price > deposit) {
             alert('not enough in account');
-            return;
+            setIsValidForm(false);
+        } else if (price && price < deposit) {
+            setIsValidForm(true);
         }
 
         ev.preventDefault();
@@ -112,9 +115,15 @@ export default function CreateStore() {
             price,
         } 
 
-        setWithdraw(price);
-        handleModifyLastAccount();
-        alert('success');
+        if(isValidForm == true){
+            try {
+                setWithdraw(price);
+                handleModifyLastAccount();
+                alert('success');
+            } catch (e) {
+                alert('Login Failed');
+            }
+        }
 
         if(id) {
             //update

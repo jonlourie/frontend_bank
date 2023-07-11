@@ -24,13 +24,15 @@ export default function PublockFormPage() {
 
     const {setDeposit, modifyLastAccount, newuser} = useContext(UserContext)
 
+    const [isValidForm, setIsValidForm] = useState(false);
+
     const ctx = useContext(UserContext);
 
     const handleModifyLastAccount = () => {
         const users = newuser  // Replace with real user
         const deposits = maxCapacity; // Replace with real deposits
         const withdrawal = 0; // Replace with real withdrawal
-        const balance = withdrawal - deposits; // Replace with real balance
+        const balance = deposits - withdrawal; // Replace with real balance
         modifyLastAccount(users, deposits, balance, withdrawal);
       };
     
@@ -79,36 +81,36 @@ export default function PublockFormPage() {
 
     async function savePublock(ev) {
 
-        if(parseInt(maxCapacity) < 0) {
+    
+        if(!maxCapacity) {
+            alert('Please enter all fields.');
+            setIsValidForm(false);
+        } else if(parseInt(maxCapacity) < 0) {
             alert('Please enter positive numbers only.');
-            return;
-        }
-
-        if(!maxCapacity) {
-            alert('Please enter all fields.');
-            return;
-        }
-
-
-        if(!maxCapacity) {
-            alert('Please enter all fields.');
-            return;
-        }
-
-  
+            setIsValidForm(false);
+        } else if (maxCapacity && parseInt(maxCapacity) > 0) {
+            setIsValidForm(true);
+        } 
 
         ev.preventDefault();
+
+        if(isValidForm == true) {
+            try {
+                setDeposit(maxCapacity);
+                handleModifyLastAccount();
+                alert('Deposit Successful');
+                
+            } catch (e) {
+                alert('Deposit Failed');
+            }
+        }
 
         const publockData = {
             title,
             maxCapacity, 
         } 
 
-        setDeposit(maxCapacity);
-        //ctx.deposit.push(maxCapacity);
-        handleModifyLastAccount();
-
-        alert('Deposit Made');
+   
 
         if(id) {
             //update

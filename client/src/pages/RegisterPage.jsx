@@ -9,6 +9,9 @@ export default function RegisterPage(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const [isValidForm, setIsValidForm] = useState(false);
+
+
     const { addAccount, setNewUser } = useContext(UserContext)
 
     const handleAddAccount = () => {
@@ -22,27 +25,31 @@ export default function RegisterPage(){
   
     async function registerUser(ev){
 
+
         if (!name || !email || !password) {
             alert('Please fill in all fields.');
-            return;
-        }
-
-        if (password.length < 8) {
+            setIsValidForm(false);
+        } else if (password.length < 8) {
             alert('Password must be at least 8 characters long.');
-            return;
+            setIsValidForm(false);
+        } else if (name && email && password && password.length >= 8) {
+            setIsValidForm(true);
         }
         
         ev.preventDefault();  
-        try {
-            setNewUser(name);
-            alert('Account Created');
-            handleAddAccount();
-            
-        } catch (e) {
-            alert('Login Failed');
+        if(isValidForm == true){
+
+            try {
+                setNewUser(name);
+                handleAddAccount();
+                alert('Account Created');
+                
+                
+            } catch (e) {
+                alert('Login Failed');
+            }
+
         }
-        
-        
               
     }
 
